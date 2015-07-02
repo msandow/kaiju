@@ -8,9 +8,15 @@ module.exports = (gameWindow)->
   new Canvas(
     width: gameConfigs.x_bounds,
     height: gameConfigs.y_bounds,
-    data: gameConfigs,
+    data: do ->
+      confs = JSON.parse(JSON.stringify(gameConfigs))
+      confs.doRender = true
+      confs.viewPort = Utils.getViewPortInfo(gameWindow)
+      
+      confs
+    ,
     calculator: (->
-      @data.viewPort = Utils.getViewPortInfo(gameWindow)
+    
     )
     renderer: (->
       viewPort = @data.viewPort
@@ -21,9 +27,14 @@ module.exports = (gameWindow)->
         @ctx.globalAlpha = if idx is conf.activeCell then 0.5 else 0.1
         @ctx.drawImage(Hexes.grass, pos.x, pos.y)
       
-      Utils.doForHexInViewPort(@data.viewPort, (idx)=>
-        createHex(idx, @data)
-      )
+      i = 0
+      while i < (gameConfigs.map_width * gameConfigs.map_height)
+        createHex(i, @data)
+        i++
+      
+#      Utils.doForHexInViewPort(@data.viewPort, (idx)=>
+#        createHex(idx, @data)
+#      )
 
       @data.doRender = false
     )

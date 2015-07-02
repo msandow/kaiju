@@ -1,9 +1,13 @@
 Utils = require('./Utilities.coffee')
+gameConfigs = require('./Configs.coffee')
 
 module.exports = ->
   ((prototype) ->
     pixelRatio = Utils.getPixelRatio(prototype)
-
+    
+    if (gameConfigs.map_width * gameConfigs.map_height) >= 10000
+      return
+    
     ratioArgs = 
       'fillRect': 'all'
       'clearRect': 'all'

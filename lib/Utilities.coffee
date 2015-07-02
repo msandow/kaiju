@@ -19,6 +19,9 @@ Utils.pointInTri = (p0x, p0y, p1x, p1y, p2x, p2y, px, py)->
 
 
 Utils.getPixelRatio = (context) ->
+  if (gameConfigs.map_width * gameConfigs.map_height) >= 10000
+    return 1
+  
   backingStore = context.backingStorePixelRatio or context.webkitBackingStorePixelRatio or context.mozBackingStorePixelRatio or context.msBackingStorePixelRatio or context.oBackingStorePixelRatio or context.backingStorePixelRatio or 1
   (window.devicePixelRatio or 1) / backingStore
 
@@ -126,5 +129,10 @@ Utils.doForHexInViewPort = (viewPort, cb) ->
       i += gameConfigs.map_width-(span_x-crop_x)
     else
       i++
+
+
+Utils.stringToID = (str='') ->
+  str.replace(/[^a-zA-Z0-9\-_:\.]/gi, '-')
+
 
 module.exports = Utils

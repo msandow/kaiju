@@ -1,14 +1,19 @@
+Utils = require('./Utilities.coffee')
 gameConfigs = require('./Configs.coffee')
 
 loadImage = (src, cb)->
+  id = src.split("/")
+  id = id.slice(id.length-2)
+
   if src.indexOf('?') > -1
     src += '&v='+gameConfigs.version
   else
     src += '?v='+gameConfigs.version
-  
+
   img = document.createElement('img')
   img.style.display = 'none'
   img.onload = cb
+  img.id = Utils.stringToID(id.join("-"))
   document.body.appendChild(img)
   img.src = src
   img

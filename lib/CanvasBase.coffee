@@ -9,7 +9,8 @@ module.exports = class
     
     @el = document.createElement('canvas')
     @ctx = @el.getContext('2d')
-    @ratio = Utils.getPixelRatio(@ctx)    
+    @ctx.imageSmoothingEnabled = false
+    @ratio = Utils.getPixelRatio(@ctx)
     
     @el.setAttribute('width', "#{@width*@ratio}px")
     @el.setAttribute('height', "#{@height*@ratio}px")
@@ -29,6 +30,7 @@ module.exports = class
     if typeof @data.doRender is 'undefined' or !!@data.doRender
       @ctx.clearRect(0,0,@width,@height)
       @renderer()
+      console.log('render')
 
 
   destroy: ->

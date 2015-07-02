@@ -12,9 +12,13 @@ module.exports = ->
     gameWindow = document.querySelector('.window')
 
 
+    TAB_ACTIVE = true
+
+
     gameLayers = [
       require('./layers/MapTerrain.coffee')(gameWindow)
       require('./layers/MapHexOverlay.coffee')(gameWindow)
+      require('./layers/MapHexActive.coffee')(gameWindow)
     ]
 
 
@@ -23,23 +27,37 @@ module.exports = ->
 
 
     gameEngine = ->
-      for layer in gameLayers
-        layer.build()
-
-
-    gameInterval = setInterval(gameEngine, (1000 / gameConfigs.clock_ps))
+      s = new Date().getTime() if gameConfigs.debug
+      if TAB_ACTIVE
+        for layer in gameLayers
+          layer.build()
+      s = new Date().getTime() - s if gameConfigs.debug
+      console.log("Cycle took",s) if gameConfigs.debug and s
+      
+      setTimeout(->
+        gameEngine()
+      , (1000 / gameConfigs.clock_ps))
 
 
     mouseMoveDebounced = Utils.debounce((evt)->
-      gameLayers[1].data.mouseX = evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft
-      gameLayers[1].data.mouseY = evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop
-      gameLayers[1].data.doRender = true
+      newActive = Utils.xyPosToCellIndex(
+        evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft,
+        evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop,
+        gameLayers[2].data
+      )
+      if newActive isnt gameLayers[2].data.activeCell        
+        gameLayers[2].data.activeCell = newActive
+        gameLayers[2].data.doRender = true
     , 10)
 
 
     scrollDebounced = Utils.debounce((evt)->
-      gameLayers[0].data.doRender = true
-      gameLayers[1].data.doRender = true
+      true
+      #vp =  Utils.getViewPortInfo(gameWindow)
+      #gameLayers[0].data.viewPort = vp
+      #gameLayers[1].data.viewPort = vp
+      #gameLayers[0].data.doRender = true
+      #gameLayers[1].data.doRender = true
     , 10)
 
 
@@ -57,11 +75,12 @@ module.exports = ->
       scrollDebounced(evt)
     )
 
+    gameEngine()
 
     TabFocus(
       focus: ->
-        gameInterval = setInterval(gameEngine, (1000 / gameConfigs.clock_ps))
+        TAB_ACTIVE = true
       blur: ->
-        clearInterval(gameInterval)
+        TAB_ACTIVE = false
     )
   )
