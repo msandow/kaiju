@@ -15,26 +15,13 @@ module.exports = (gameWindow)->
       confs
     ,
     calculator: (->
-      
+    
     )
     renderer: (->
       viewPort = @data.viewPort
+      @ctx.fillStyle = 'rgba(0,0,0,0.35)'
+      @ctx.fillRect(0,0,@width,@height)
       
-      createHex = (idx, conf)=>
-        pos = Utils.cellIndexToxyPos(idx, @data)
-        @ctx.globalAlpha = 0.05
-        d = Utils.parseToTerrain(100000)
-        @ctx.drawImage(d, pos.x, pos.y) if d
-      
-      i = 0
-      while i < (gameConfigs.map_width * gameConfigs.map_height)
-        createHex(i, @data)
-        i++
-      
-#      Utils.doForHexInViewPort(@data.viewPort, (idx)=>
-#        createHex(idx, @data)
-#      )
-
       @data.doRender = false
     )
   )

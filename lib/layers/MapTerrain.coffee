@@ -1,6 +1,5 @@
 gameConfigs = require('./../Configs.coffee')
-Canvas = require('./../CanvasBase.coffee')
-Hexes = require('./../Hexes.coffee')
+Canvas = require('./../HexedCanvas.coffee')
 Utils = require('./../Utilities.coffee')
 
 module.exports = (gameWindow)->
@@ -22,10 +21,9 @@ module.exports = (gameWindow)->
       viewPort = @data.viewPort
       
       createHex = (idx, conf)=>
-        pos = Utils.cellIndexToxyPost(idx, @data)        
-
-        @ctx.globalAlpha = if idx is conf.activeCell then 0.5 else 0.1
-        @ctx.drawImage(Hexes.grass, pos.x, pos.y)
+        pos = Utils.cellIndexToxyPos(idx, @data)
+        d = Utils.parseToTerrain( gameConfigs.terrain[idx] or 100000)
+        @ctx.drawImage(d, pos.x, pos.y) if d
       
       i = 0
       while i < (gameConfigs.map_width * gameConfigs.map_height)

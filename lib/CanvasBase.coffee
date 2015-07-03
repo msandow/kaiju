@@ -1,4 +1,5 @@
 Utils = require('./Utilities.coffee')
+gameConfigs = require('./Configs.coffee')
 
 module.exports = class
   constructor: (conf) ->
@@ -9,7 +10,6 @@ module.exports = class
     
     @el = document.createElement('canvas')
     @ctx = @el.getContext('2d')
-    @ctx.imageSmoothingEnabled = false
     @ratio = Utils.getPixelRatio(@ctx)
     
     @el.setAttribute('width', "#{@width*@ratio}px")
@@ -19,22 +19,34 @@ module.exports = class
     
     @calculator = if conf.calculator then conf.calculator.bind(@) else (->).bind(@)
     @data = if conf.data then JSON.parse(JSON.stringify((conf.data))) else {}
+    @data.doRender = true
     @renderer = if conf.renderer then conf.renderer.bind(@) else (->).bind(@)
     
     @
 
 
   build: ->
+    s = new Date().getTime() if gameConfigs.debug
     @calculator()
+    s = new Date().getTime() - s if gameConfigs.debug
+    console.log("Calculating canvas took",s) if gameConfigs.debug and s
 
     if typeof @data.doRender is 'undefined' or !!@data.doRender
+      s = new Date().getTime() if gameConfigs.debug
       @ctx.clearRect(0,0,@width,@height)
       @renderer()
-      console.log('render')
+      s = new Date().getTime() - s if gameConfigs.debug
+      console.log("Rendering canvas took",s) if gameConfigs.debug and s
 
 
   destroy: ->
     @el.parentNode.removeChild(@el)
-    @ctx = null
-    @calculator = (->)
-    @renderer = (->)
+    delete @ctx
+    delete @data
+    delete @calculator
+    delete @renderer
+    delete @width
+    delete @height
+    delete @ratio
+    delete @left
+    delete @top

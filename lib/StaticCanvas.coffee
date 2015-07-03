@@ -8,6 +8,10 @@ _static = class extends CanvasBase
     document.body.appendChild(@el)
     @build()
     @el
+  
+  build: ->
+    super()
+    @data.doRender = false
 
 module.exports = (conf)->
   new_static = new _static(conf)

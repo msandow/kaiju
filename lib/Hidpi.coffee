@@ -5,7 +5,7 @@ module.exports = ->
   ((prototype) ->
     pixelRatio = Utils.getPixelRatio(prototype)
     
-    if (gameConfigs.map_width * gameConfigs.map_height) >= 10000
+    if (gameConfigs.map_width * gameConfigs.map_height) >= gameConfigs.areaLimit
       return
     
     ratioArgs = 

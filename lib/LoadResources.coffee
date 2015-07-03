@@ -1,5 +1,7 @@
 Utils = require('./Utilities.coffee')
 gameConfigs = require('./Configs.coffee')
+StaticCanvas = require('./StaticCanvas.coffee')
+
 
 loadImage = (src, cb)->
   id = src.split("/")
@@ -12,8 +14,20 @@ loadImage = (src, cb)->
 
   img = document.createElement('img')
   img.style.display = 'none'
-  img.onload = cb
-  img.id = Utils.stringToID(id.join("-"))
+  img.onload = ->
+    can = StaticCanvas(
+      width: img.width
+      height: img.height
+      renderer: ->
+        @ctx.drawImage(img,0,0)
+    )
+    
+    can.style.display = 'none'
+    document.body.appendChild(can)
+    img.parentNode.removeChild(img)
+    can.id = Utils.stringToID(id.join("-"))
+    cb()
+  
   document.body.appendChild(img)
   img.src = src
   img

@@ -1,6 +1,5 @@
 gameConfigs = require('./../Configs.coffee')
-Canvas = require('./../CanvasBase.coffee')
-Hexes = require('./../Hexes.coffee')
+Canvas = require('./../HexedCanvas.coffee')
 Utils = require('./../Utilities.coffee')
 
 module.exports = (gameWindow)->
@@ -20,10 +19,11 @@ module.exports = (gameWindow)->
     )
     renderer: (->
       createHex = (idx, conf)=>
-        pos = Utils.cellIndexToxyPost(idx, @data)
-        @ctx.drawImage(Hexes.empty, pos.x, pos.y)
+        pos = Utils.cellIndexToxyPos(idx, @data)
+        d = Utils.parseToTerrain(100000)
+        @ctx.drawImage(d, pos.x, pos.y) if d
 
-      if @data.activeCell and @data.activeCell > -1
+      if typeof @data.activeCell is 'number' and @data.activeCell > -1
         createHex(@data.activeCell, @data)
       
 #      Utils.doForHexInViewPort(@data.viewPort, (idx)=>

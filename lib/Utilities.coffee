@@ -3,7 +3,6 @@ gameConfigs = require('./Configs.coffee')
 Utils = {}
 
 
-
 Utils.triArea = (p0x, p0y, p1x, p1y, p2x, p2y)->
   1/2*(-p1y*p2x + p0y*(-p1x + p2x) + p0x*(p1y - p2y) + p1x*p2y)
 
@@ -19,7 +18,7 @@ Utils.pointInTri = (p0x, p0y, p1x, p1y, p2x, p2y, px, py)->
 
 
 Utils.getPixelRatio = (context) ->
-  if (gameConfigs.map_width * gameConfigs.map_height) >= 10000
+  if (gameConfigs.map_width * gameConfigs.map_height) >= gameConfigs.areaLimit
     return 1
   
   backingStore = context.backingStorePixelRatio or context.webkitBackingStorePixelRatio or context.mozBackingStorePixelRatio or context.msBackingStorePixelRatio or context.oBackingStorePixelRatio or context.backingStorePixelRatio or 1
@@ -27,7 +26,7 @@ Utils.getPixelRatio = (context) ->
 
 
 
-Utils.cellIndexToxyPost = (idx, conf)->
+Utils.cellIndexToxyPos = (idx, conf)->
   yy = (Math.floor(idx/conf.map_width))
   xx = (idx - (yy*conf.map_width))
 
@@ -69,7 +68,7 @@ Utils.xyPosToCellIndex = (x, y, conf)->
         lastHex = (((yy) * conf.map_width) + xx)
     
     if lastHex > -1
-      renderSpace = Utils.cellIndexToxyPost(lastHex, conf)
+      renderSpace = Utils.cellIndexToxyPos(lastHex, conf)
       
       if (!(renderSpace.x <= x <= renderSpace.x + conf.hex_width) || !(renderSpace.y <= y <= renderSpace.y + conf.hex_height))
         lastHex = -1
@@ -112,27 +111,20 @@ Utils.getViewPortInfo = (gameWindow) ->
   ]
 
 
-Utils.doForHexInViewPort = (viewPort, cb) ->
-  crop_y = Math.max( Math.floor(viewPort[1] / gameConfigs.hex_height) - 1, 0)
-  span_y = Math.min( Math.ceil(viewPort[3] / gameConfigs.hex_height) + 1, gameConfigs.map_height)
-  crop_x = Math.max( Math.floor(viewPort[0] / (gameConfigs.hex_width * 0.75)) - 1, 0)
-  span_x = Math.min( Math.ceil(viewPort[2] / (gameConfigs.hex_width * 0.75)) + 1, gameConfigs.map_width)
-
-  i = (crop_y * gameConfigs.map_width) + crop_x
-  rowCount = 0
-  while i < ((span_y * gameConfigs.map_width) + span_x)
-    cb(i)
-
-    rowCount++
-    if rowCount > span_x-crop_x
-      rowCount = 0
-      i += gameConfigs.map_width-(span_x-crop_x)
-    else
-      i++
-
 
 Utils.stringToID = (str='') ->
   str.replace(/[^a-zA-Z0-9\-_:\.]/gi, '-')
 
+
+Utils.parseToTerrain = (int) ->
+  require('./TerrainConstants.coffee').parseToTerrain(int)
+
+
+Utils.generateHexes = (int) ->
+  require('./TerrainConstants.coffee').generateHexes()
+
+
+Utils.random = (from, to) ->
+  ~~Math.floor(Math.random() * to) + from
 
 module.exports = Utils
