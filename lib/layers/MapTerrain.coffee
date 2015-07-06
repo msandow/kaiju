@@ -20,14 +20,14 @@ module.exports = (gameWindow)->
     renderer: (->
       viewPort = @data.viewPort
       
-      createHex = (idx, conf)=>
-        pos = Utils.cellIndexToxyPos(idx, @data)
+      createHex = (idx)=>
+        pos = @cellIndexToxyPos(idx, @data)
         d = Utils.parseToTerrain( gameConfigs.terrain[idx] or 100000)
         @ctx.drawImage(d, pos.x, pos.y) if d
       
       i = 0
       while i < (gameConfigs.map_width * gameConfigs.map_height)
-        createHex(i, @data)
+        createHex(i)
         i++
       
 #      Utils.doForHexInViewPort(@data.viewPort, (idx)=>

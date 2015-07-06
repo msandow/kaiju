@@ -18,13 +18,13 @@ module.exports = (gameWindow)->
       
     )
     renderer: (->
-      createHex = (idx, conf)=>
-        pos = Utils.cellIndexToxyPos(idx, @data)
+      createHex = (idx)=>
+        pos = @cellIndexToxyPos(idx, @data)
         d = Utils.parseToTerrain(100000)
         @ctx.drawImage(d, pos.x, pos.y) if d
 
       if typeof @data.activeCell is 'number' and @data.activeCell > -1
-        createHex(@data.activeCell, @data)
+        createHex(@data.activeCell)
       
 #      Utils.doForHexInViewPort(@data.viewPort, (idx)=>
 #        createHex(idx, @data)

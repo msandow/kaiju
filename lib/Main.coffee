@@ -11,9 +11,14 @@ module.exports = ->
     console.error('Map width and height must be multiples of 2')
     return
   
+  console.log("Loading resources") if gameConfigs.debug
+  
   Defer([
-    'https://upload.wikimedia.org/wikipedia/commons/3/3d/LARGE_elevation.jpg'
+    'images/hexes/low_grass.png'
+    'images/hexes/shallow_water.png'
   ],->
+    console.log("Resources loaded") if gameConfigs.debug
+    
     gameWindow = document.querySelector('.window')
     
     TAB_ACTIVE = true
@@ -32,10 +37,9 @@ module.exports = ->
 
 
     mouseMoveDebounced = Utils.debounce((evt)->
-      newActive = Utils.xyPosToCellIndex(
+      newActive = gameLayers.hash.activeHex.xyPosToCellIndex(
         evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft,
-        evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop,
-        gameLayers.hash.activeHex.data
+        evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop
       )
 
       if newActive isnt gameLayers.hash.activeHex.data.activeCell        
@@ -72,10 +76,9 @@ module.exports = ->
     if gameConfigs.debug
       gameWindow.addEventListener("click", (evt)->
         console.log(
-          Utils.xyPosToCellIndex(
+          gameLayers.hash.activeHex.xyPosToCellIndex(
             evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft,
-            evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop,
-            gameConfigs
+            evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop
           )
         )
       )

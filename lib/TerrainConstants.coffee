@@ -86,8 +86,7 @@ Hexes.grass = StaticCanvas(
   height: gameConfigs.hex_height
   data: gameConfigs
   renderer: ->
-    @ctx.fillStyle = '#ddf687'
-    @ctx.fillRect(0,0,@data.hex_width,@data.hex_height)
+    @ctx.drawImage(document.getElementById('hexes-low_grass.png'), 0, 0)
     @ctx.globalCompositeOperation = 'destination-in'
     hexShape.call(@)
     @ctx.fillStyle = '#000'
@@ -100,8 +99,7 @@ Hexes.water = StaticCanvas(
   height: gameConfigs.hex_height
   data: gameConfigs
   renderer: ->
-    @ctx.fillStyle = '#67b5df'
-    @ctx.fillRect(0,0,@data.hex_width,@data.hex_height)
+    @ctx.drawImage(document.getElementById('hexes-shallow_water.png'), 0, 0)
     @ctx.globalCompositeOperation = 'destination-in'
     hexShape.call(@)
     @ctx.fillStyle = '#000'

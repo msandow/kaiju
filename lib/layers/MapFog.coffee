@@ -18,10 +18,21 @@ module.exports = (gameWindow)->
     
     )
     renderer: (->
-      viewPort = @data.viewPort
+      d = Utils.parseToTerrain(110000)
+    
+      createHex = (idx)=>
+        pos = @cellIndexToxyPos(idx, @data)
+        @ctx.drawImage(d, pos.x, pos.y) if d
+      
+      @ctx.save()
       @ctx.fillStyle = 'rgba(0,0,0,0.35)'
       @ctx.fillRect(0,0,@width,@height)
+      @ctx.globalCompositeOperation = 'destination-out'
       
+      for idx in @hexAndRadius(120,2)
+        createHex(idx)
+      
+      @ctx.restore()
       @data.doRender = false
     )
   )
