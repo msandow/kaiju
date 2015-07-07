@@ -2,8 +2,8 @@ module.exports = do ->
   ob = {}
   ob.hex_width = 40
   ob.hex_height = Math.round(ob.hex_width / 1.2)
-  ob.map_width = 16
-  ob.map_height = 16
+  ob.map_width = 150
+  ob.map_height = 150
 
   ob.x_bounds = (ob.hex_width * 1.5) * (ob.map_width / 2) + (ob.hex_width * 0.25)
   ob.y_bounds = (ob.map_height * ob.hex_height) + (ob.hex_height / 2)
@@ -20,6 +20,6 @@ module.exports = do ->
     i++
     
   
-  ob.terrain[120] = 120000
+  ob.terrain[521] = 120000
   
   ob

@@ -1,5 +1,5 @@
-Canvas = require('./CanvasBase.coffee')
 gameConfigs = require('./Configs.coffee')
+Canvas = require('./CanvasBase.coffee')
 Utils = require('./Utilities.coffee')
 
 module.exports = class extends Canvas
@@ -80,31 +80,35 @@ module.exports = class extends Canvas
 
 
   hexAndRadius: (idx, radius)->
+    radius += 4
+    [halfWidth, halfHeight] = [Math.round(gameConfigs.hex_width / 2), Math.round(gameConfigs.hex_height / 2)]
     up = idx - (gameConfigs.map_width * radius)
     down = idx + (gameConfigs.map_width * radius)
     center = @cellIndexToxyPos(idx)
-
+    center.x += halfWidth
+    center.y += halfHeight
+    
     cells = []
     row = 0
-    
-    ys = 0-radius
-    xs = 0-radius
-    
+
     i = up - radius
     while i <= down + radius
       p = @cellIndexToxyPos(i)
-      #p.x += xs * (gameConfigs.hex_width-gameConfigs.hex_height)
-      if Utils.pointInCircle(center.x, center.y, p.x, p.y, (radius * gameConfigs.hex_width))
-        cells.push(i)
+
+      if Utils.pointInCircle(
+        center.x,
+        center.y,
+        p.x + halfWidth,
+        p.y + halfHeight,
+        ((radius-4) * gameConfigs.hex_width)
+      )
+        cells.push(i) if 0 <= i <= gameConfigs.map_width * gameConfigs.map_height
       
       if row < radius * 2
         row++
         i++
-        xs++
       else
         row = 0
         i += gameConfigs.map_width-(radius*2)
-        ys++
-        xs = 0-radius
-    #console.log(expected,cells.length)
+ 
     cells

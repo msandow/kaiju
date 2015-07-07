@@ -1,7 +1,7 @@
+gameConfigs = require('./Configs.coffee')
 require('./Hidpi.coffee')()
 
 Utils = require('./Utilities.coffee')
-gameConfigs = require('./Configs.coffee')
 TabFocus = require('./TabFocus.coffee')
 Defer = require('./LoadResources.coffee')
 Layers = require('./LayersManager.coffee')
@@ -23,7 +23,8 @@ module.exports = ->
     
     TAB_ACTIVE = true
 
-    gameLayers = Layers(gameWindow)
+    window.gameLayers = Layers(gameWindow)
+    window.viewPort = Utils.getViewPortInfo(gameWindow)
 
 
     gameEngine = ->
@@ -49,12 +50,7 @@ module.exports = ->
 
 
     scrollDebounced = Utils.debounce((evt)->
-      true
-      #vp =  Utils.getViewPortInfo(gameWindow)
-      #gameLayers[0].data.viewPort = vp
-      #gameLayers[1].data.viewPort = vp
-      #gameLayers[0].data.doRender = true
-      #gameLayers[1].data.doRender = true
+      window.viewPort = Utils.getViewPortInfo(gameWindow)
     , 10)
 
 
@@ -75,12 +71,15 @@ module.exports = ->
 
     if gameConfigs.debug
       gameWindow.addEventListener("click", (evt)->
-        console.log(
-          gameLayers.hash.activeHex.xyPosToCellIndex(
-            evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft,
-            evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop
-          )
+        idx = gameLayers.hash.activeHex.xyPosToCellIndex(
+          evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft,
+          evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop
         )
+        
+        console.log(idx)
+        
+        gameLayers.hash.fog.data.center = idx
+        gameLayers.hash.fog.data.doRender = true
       )
 
 

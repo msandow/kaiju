@@ -1,5 +1,5 @@
-Utils = require('./Utilities.coffee')
 gameConfigs = require('./Configs.coffee')
+Utils = require('./Utilities.coffee')
 StaticCanvas = require('./StaticCanvas.coffee')
 
 

@@ -1,5 +1,5 @@
-StaticCanvas = require('./StaticCanvas.coffee')
 gameConfigs = require('./Configs.coffee')
+StaticCanvas = require('./StaticCanvas.coffee')
 Utils = require('./Utilities.coffee')
 
 hexShape = () ->

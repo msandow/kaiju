@@ -10,7 +10,6 @@ module.exports = (gameWindow)->
     data: do ->
       confs = JSON.parse(JSON.stringify(gameConfigs))
       confs.doRender = true
-      confs.viewPort = Utils.getViewPortInfo(gameWindow)
       
       confs
     ,
