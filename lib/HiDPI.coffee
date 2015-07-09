@@ -13,6 +13,7 @@ module.exports = ->
         1
         2
       ]
+      'getImageData': [0, 1]
       'arcTo': 'all'
       'bezierCurveTo': 'all'
       'isPointinPath': 'all'

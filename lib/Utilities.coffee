@@ -16,8 +16,8 @@ U.scalePoints = (points, cx, cy, sx, sy)->
   sy = sx if typeof sy is 'undefined'
   points.map((ps)->
     [
-      cx + sx * (ps[0] - cx)
-      cy + sy * (ps[1] - cy)
+      Math.round(cx + sx * (ps[0] - cx))
+      Math.round(cy + sy * (ps[1] - cy))
     ]
   )
 
@@ -56,25 +56,41 @@ U.noisify = (points)->
 
 U.translate = (points, x, y)->
   points.map((i)->
+    return i if !Array.isArray(i)
     [i[0]+x,i[1]+y]
   )
 
 
 U.bounds = (points)->
-  xs = []
-  ys = []
-  i = 0
-  while i < points.length
-    xs.push(points[i][0])
-    ys.push(points[i][1])
-    i++
-  
+  [mnx, mxx, mny, mxy] = [0, 0, 0, 0]
+
+  for p in points
+    mnx = p[0] if p[0] < mnx
+    mxx = p[0] if p[0] > mxx
+    mny = p[1] if p[1] < mny
+    mxy = p[1] if p[1] > mxy
+
   [
-    Math.min.apply(null, xs)
-    Math.min.apply(null, ys)
-    Math.max.apply(null, xs)
-    Math.max.apply(null, ys)
+    mnx
+    mny
+    mxx
+    mxy
+    mxx - mnx
+    mxy - mny
   ]
 
+
+
+U.center = (points)->
+  b = U.bounds(points)
+  [Math.round((b[2]-b[0])/2), Math.round((b[3]-b[1])/2)]
+
+
+
+U.getEventCoords = (evt, el={offsetLeft:0, offsetTop:0})->
+  [
+    evt.clientX + window.gameWindow.scrollLeft - window.gameWindow.offsetLeft - el.offsetLeft,
+    evt.clientY + window.gameWindow.scrollTop - window.gameWindow.offsetTop - el.offsetTop
+  ]
 
 module.exports = U
