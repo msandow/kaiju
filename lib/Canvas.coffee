@@ -1,3 +1,5 @@
+Utils = require('./Utilities.coffee')
+
 module.exports = class Canvas
   constructor: (confs={})->
     @width = confs.width or 0
@@ -5,6 +7,7 @@ module.exports = class Canvas
     @left = confs.left or 0
     @top = confs.top or 0
     @data = confs.data or {}
+    @opacity = if typeof confs.opacity isnt undefined then confs.opacity else 1
     
     @forks = []
     
@@ -22,7 +25,7 @@ module.exports = class Canvas
       shadowColor: 'rgba(0,0,0,0)'
       shadowOffsetX: 0
       shadowOffsetY: 0
-      strokeStyle: 'rgba(0,0,0,0)'
+      strokeStyle: 'rgba(0,0,0,1)'
       textAlign: 'start'
       textBaseline: 'alphabetic'
     
@@ -39,6 +42,7 @@ module.exports = class Canvas
   init: ->
     @el.setAttribute('width', "#{@width*pixelRatio}px")
     @el.setAttribute('height', "#{@height*pixelRatio}px")
+    @el.style.opacity = @opacity
     @el.style.width = "#{@width}px"
     @el.style.height = "#{@height}px"
     @el.style.left = "#{@left}px"
@@ -73,11 +77,11 @@ module.exports = class Canvas
     
     
   clone: ()->
-    new Canvas({width:@width,height:@height,left:@left,top:@top,data:@data})
+    new Canvas({width:@width,height:@height,left:@left,top:@top,data:@data,opacity:@opacity})
   
   
   export: ->
-    JSON.stringify(@, ['width','height','left','top','data'])
+    JSON.stringify(@, ['width','height','left','top','data','opacity'])
   
   
   
@@ -90,6 +94,7 @@ module.exports = class Canvas
     @left = o.left or 0
     @top = o.top or 0
     @data = o.data or {}
+    @opacity = if typeof o.opacity isnt undefined then o.opacity else 1
     
     @init()
     
@@ -118,8 +123,22 @@ module.exports = class Canvas
           ref.ctx.globalCompositeOperation = switch comm.command
             when 'add' then 'source-over'
             when 'subtract' then 'destination-out'
-
+          
+          ref.ctx.beginPath()
           ref.drawDataPoints(comm.data)
+          ref.ctx.closePath()
+          ref.ctx.fill()
+        
+        when 'smoothline'
+          oj = ref.ctx.lineJoin
+          oc = ref.ctx.lineCap
+          ref.ctx.lineJoin = "round"
+          ref.ctx.lineCap = "round"
+          ref.ctx.beginPath()    
+          ref.drawSmoothLine(comm.data)            
+          ref.ctx.stroke()
+          ref.ctx.lineJoin = oj
+          ref.ctx.lineCap = oc
         
         when 'fill'
           ref.ctx.fillStyle = comm.data[4]
@@ -155,11 +174,7 @@ module.exports = class Canvas
           c.ctx.fillRect(0,0,@width,@height)          
           c.ctx.globalCompositeOperation = 'destination-out'
           c.ctx.drawImage(ref.el,0,0)
-          
-          
-          #document.querySelector('.window').appendChild(c.el)
-          #return
-          
+
           ref.ctx.drawImage(c.el,0,0)   
           c.destroy()
         
@@ -212,9 +227,18 @@ module.exports = class Canvas
       delete @k
 
 
-  drawDataPoints: (points)->    
-    @ctx.beginPath()
-    
+  drawSmoothLine: (points)->
+    i = 0
+    while i <points.length - 1            
+      @ctx.moveTo(points[i][0], points[i][1]) if i is 0
+
+      mid = Utils.midPoint(points[i], points[i+1])
+      @ctx.quadraticCurveTo(mid[0],mid[1],points[i+1][0], points[i+1][1])
+
+      i++
+  
+
+  drawDataPoints: (points)->
     if points.length
 
       @ctx.moveTo(points[0][0], points[0][1])
@@ -233,7 +257,4 @@ module.exports = class Canvas
         else if left >= 3
           @ctx.bezierCurveTo(points[p][0], points[p][1], points[p+1][0], points[p+1][1], points[p+2][0], points[p+2][1])
           p += 3
-      
-      @ctx.closePath()
-      #@ctx.stroke()
-      @ctx.fill()
+          p += 3

@@ -33,14 +33,14 @@ U.midPoint = (a, b)->
 
 
 
-U.noisify = (points)->
+U.noisify = (points, spread=4)->
   newArr = []
   i = 0
   
   rando = (i)->
-    U.rand(i-4, i+4)
+    U.rand(i-spread, i+spread)
   
-  while i < points.length
+  while i < points.length - 1
     newArr.push(points[i])
     if points[i+1]
       mid = U.midPoint(points[i], points[i+1]).map(rando)
@@ -49,6 +49,8 @@ U.noisify = (points)->
 
     newArr.push(mid)
     i++
+  
+  newArr.push(points[points.length-1])
 
   newArr
 

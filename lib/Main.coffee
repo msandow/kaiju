@@ -22,22 +22,24 @@ module.exports = ->
   )
 
 
-  gameWindow.addEventListener("dblclick", (evt)->
-    points.push([
-      evt.clientX + gameWindow.scrollLeft - gameWindow.offsetLeft - BezierDisplay.el.offsetLeft,
-      evt.clientY + gameWindow.scrollTop - gameWindow.offsetTop - BezierDisplay.el.offsetTop
-    ])
-    #GameDisplay.clear()
-    #GameDisplay.drawDataPoints(points)
+  gameWindow.addEventListener("click", (evt)->
+    coor = Util.getEventCoords(evt, definedLayers[2].el)
+    points.push(coor)
+    definedLayers[3].clear()
+    definedLayers[3].ctx.beginPath()
+    definedLayers[3].ctx.lineWidth = 7
+    definedLayers[3].drawSmoothLine(points)
+    definedLayers[3].ctx.stroke()
+    console.log(JSON.stringify(Util.noisify(points)))
   )
   
-  gameWindow.addEventListener("click", (evt)->
-    coor = Util.getEventCoords(evt)
-    i = definedLayers.length - 1
-    while i >= 0
-      console.log(i, definedLayers[i].getPixelAlpha(coor[0], coor[1]))
-      i--
-  )
+#  gameWindow.addEventListener("click", (evt)->
+#    coor = Util.getEventCoords(evt)
+#    i = definedLayers.length - 1
+#    while i >= 0
+#      console.log(i, definedLayers[i].getPixelAlpha(coor[0], coor[1]))
+#      i--
+#  )
   
   #window.GameDisplay = new Canvas()
 #  BezierDisplay.data.commands = [
@@ -62,11 +64,16 @@ module.exports = ->
   for layer in [
     require('./maps/BaseWater.coffee')(2850, 2833)
     require('./maps/SFBay.coffee')
+    require('./maps/SFBay_Roads.coffee')
   ]
     displayLayer = new Canvas()
     displayLayer.import(layer)
     gameWindow.appendChild(displayLayer.el)
     definedLayers.push(displayLayer)
+  
+  displayLayer = new Canvas(width:2850,height:2833,top:50,left:50)
+  gameWindow.appendChild(displayLayer.el)
+  definedLayers.push(displayLayer)
   
 #  for c,idx in BezierDisplay.data.commands when ['add','subtract'].indexOf(c.command) > -1
 #    console.log(idx)
