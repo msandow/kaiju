@@ -1,9 +1,9 @@
 module.exports = (w, h)->
   width:w
   height:h
-  left:50
-  top:50
-  opacity:0
+  left:0
+  top:0
+  opacity:1
   data:
     commands:[
       {command:"fill",data:[0,0,w,h,'#22506a']}

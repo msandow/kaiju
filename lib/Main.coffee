@@ -71,17 +71,17 @@ module.exports = ->
     gameWindow.appendChild(displayLayer.el)
     definedLayers.push(displayLayer)
   
-  displayLayer = new Canvas(width:2850,height:2833,top:50,left:50)
+  displayLayer = new Canvas(width:2850,height:2833,top:0,left:0)
   gameWindow.appendChild(displayLayer.el)
   definedLayers.push(displayLayer)
   
-#  for c,idx in BezierDisplay.data.commands when ['add','subtract'].indexOf(c.command) > -1
-#    console.log(idx)
-#    console.log(JSON.stringify(Util.scalePoints(c.data,0,0,1.5,1.5)))
-#    
-#    console.log('')
-#    console.log('---------------------')
-#    console.log('')
+  for c,idx in definedLayers[2].data.commands when ['smoothline'].indexOf(c.command) > -1
+    console.log(idx)
+    console.log(JSON.stringify(Util.translate(c.data,50,50)))
+    
+    console.log('')
+    console.log('---------------------')
+    console.log('')
   
   #console.log(JSON.stringify(BezierDisplay.data.commands))
   

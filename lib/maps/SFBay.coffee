@@ -1,9 +1,9 @@
 module.exports =
   width:2850
   height:2833
-  left:50
-  top:50
-  opacity:0.5
+  left:0
+  top:0
+  opacity:1
   data:
     commands:[
       {command:"setstyle",data:{shadowBlur:50, shadowColor:'rgba(12,39,55,0.8)'}}
