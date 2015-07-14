@@ -1,6 +1,7 @@
 module.exports =
   TILE_SIZE: 640
   ZOOM: 13
+  CROP: 25
   PIXEL_RATIO: do ->
     context = CanvasRenderingContext2D.prototype
     backingStore = context.backingStorePixelRatio or context.webkitBackingStorePixelRatio or context.mozBackingStorePixelRatio or context.msBackingStorePixelRatio or context.oBackingStorePixelRatio or context.backingStorePixelRatio or 1

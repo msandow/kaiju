@@ -1,18 +1,23 @@
 Configs = require('./Configs.coffee')
 Canvas = require('./Canvas.coffee')
 Geo = require('./Geo.coffee')
-URL = require('./StaticMap.coffee')
+Loader = require('./TileLoader.coffee')
+require('./HiDPI.coffee')(Configs.PIXEL_RATIO)
+
 
 module.exports = ->
-  cells = Geo(37.787064,-122.340403,4,3)
+  tiles =
+    lat: 37.787064
+    lng: -122.340403
+    width: 3
+    height: 4
+    cells: null
+  
+  tiles.cells = Geo(
+    tiles.lat
+    tiles.lng
+    tiles.width
+    tiles.height
+  )
 
-  #console.log(URL(37.787064,-122.340403,'TERRAIN'))
-  console.log(cells)
-  for i in cells
-    img = document.createElement('img')
-    img.src = URL(i.geo.lat, i.geo.lng,'TERRAIN')
-    img.width = Configs.TILE_SIZE
-    img.height = Configs.TILE_SIZE
-    img.style.left = "#{i.x}px"
-    img.style.top = "#{i.y}px"
-    document.body.appendChild(img)
+  Loader(tiles)

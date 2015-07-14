@@ -10,22 +10,28 @@ LatLng = class
 
 mercator =
   MERCATOR_RANGE: 256
+  
   bound: (value, opt_min, opt_max) ->
-    if opt_min != null
-      value = Math.max(value, opt_min)
-    if opt_max != null
-      value = Math.min(value, opt_max)
+    value = Math.max(value, opt_min) if opt_min != null      
+    value = Math.min(value, opt_max) if opt_max != null      
     value
+  
   degreesToRadians: (deg) ->
     deg * Math.PI / 180
+  
   radiansToDegrees: (rad) ->
     rad / (Math.PI / 180)
-  MercatorProjection: ->
-    @pixelOrigin_ = new Point(mercator.MERCATOR_RANGE / 2, mercator.MERCATOR_RANGE / 2)
-    @pixelsPerLonDegree_ = mercator.MERCATOR_RANGE / 360
-    @pixelsPerLonRadian_ = mercator.MERCATOR_RANGE / (2 * Math.PI)
+  
+  MercatorProjection: class
+    constructor: ->      
+      @pixelOrigin_ = new Point(
+        mercator.MERCATOR_RANGE / 2,
+        mercator.MERCATOR_RANGE / 2
+      )
+      @pixelsPerLonDegree_ = mercator.MERCATOR_RANGE / 360
+      @pixelsPerLonRadian_ = mercator.MERCATOR_RANGE / (2 * Math.PI)
 
-    @fromLatLngToPoint = (latLng, opt_point) ->
+    fromLatLngToPoint: (latLng, opt_point) ->
       me = this
       point = opt_point or new Point(0, 0)
       origin = me.pixelOrigin_
@@ -34,7 +40,7 @@ mercator =
       point.y = origin.y + 0.5 * Math.log((1 + siny) / (1 - siny)) * -me.pixelsPerLonRadian_
       point
 
-    @fromPointToLatLng = (point) ->
+    fromPointToLatLng: (point) ->
       me = this
       origin = me.pixelOrigin_
       lng = (point.x - (origin.x)) / me.pixelsPerLonDegree_
@@ -42,9 +48,9 @@ mercator =
       lat = mercator.radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - (Math.PI / 2))
       new LatLng(lat, lng)
 
-    return
+  
   getCorners: (center, zoom, mapWidth, mapHeight) ->
-    proj = new (mercator.MercatorProjection)
+    proj = new mercator.MercatorProjection()
     scale = 2 ** zoom
     centerPx = proj.fromLatLngToPoint(center)
     SWPoint = 
@@ -68,7 +74,6 @@ getMapUrl = (lat, long, zoom, mapType) ->
 
 
 _ar = (24 / 36)
-_cell_ar = (Configs.TILE_SIZE - 25)
 
 module.exports = (lat, lng, widthCells, heightCells) ->
   _zoom = Configs.ZOOM
@@ -93,64 +98,20 @@ module.exports = (lat, lng, widthCells, heightCells) ->
   ww_translate = ww * Configs.TILE_SIZE
   hh = -_vertCells + _vertUnits
   hh_translate = hh * Configs.TILE_SIZE
+  rowCrop = 0
   
   while hh <= _vertCells
     
     while ww <= _horCells
       cells.push({
         x: (ww * Configs.TILE_SIZE) - ww_translate
-        y: (hh * Configs.TILE_SIZE) - hh_translate
-        geo: new LatLng(lat + (_size.h * hh), lng + ( _size.w * ww))
+        y: (hh * Configs.TILE_SIZE) - hh_translate - (Configs.CROP * rowCrop)
+        geo: new LatLng(lat + (_size.h * hh) - (_degH  * Configs.CROP * rowCrop), lng + ( _size.w * ww))
       })
       ww++
     
     ww = -_horCells + _horUnits
+    rowCrop++
     hh++
-  
-#  return [
-#    new LatLng(lat-(_degH*1), lng-(_size.w*1.5))
-#    new LatLng(lat-(_degH*1),lng-(_size.w*0.5))
-#  ]
 
   cells
-#_async.series [
-#    (cb) ->
-#      _imgToCanvas lat - (_size.h), lng - (_size.w * 1.5), cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_size.h), lng - (_size.w * 0.5), cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_size.h), lng + _size.w * 0.5, cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_size.h), lng + _size.w * 1.5, cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 25), lng - (_size.w * 1.5), cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 25), lng - (_size.w * 0.5), cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 25), lng + _size.w * 0.5, cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 25), lng + _size.w * 1.5, cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 50) + _size.h, lng - (_size.w * 1.5), cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 50) + _size.h, lng - (_size.w * 0.5), cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 50) + _size.h, lng + _size.w * 0.5, cb
-#      return
-#    (cb) ->
-#      _imgToCanvas lat - (_degH * 50) + _size.h, lng + _size.w * 1.5, cb
-#      return
-#  ], (result) ->
-#    cb result
-#    return
-#  return

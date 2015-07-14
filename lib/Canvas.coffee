@@ -1,3 +1,4 @@
+Configs = require('./Configs.coffee')
 
 module.exports = class Canvas
   constructor: (confs={})->
@@ -37,8 +38,8 @@ module.exports = class Canvas
 
 
   init: ->
-    @el.setAttribute('width', "#{@width*pixelRatio}px")
-    @el.setAttribute('height', "#{@height*pixelRatio}px")
+    @el.setAttribute('width', "#{@width * Configs.PIXEL_RATIO}px")
+    @el.setAttribute('height', "#{@height * Configs.PIXEL_RATIO}px")
     @el.style.opacity = @opacity
     @el.style.width = "#{@width}px"
     @el.style.height = "#{@height}px"
