@@ -2,11 +2,15 @@ Configs = require('./Configs.coffee')
 Canvas = require('./Canvas.coffee')
 URL = require('./StaticMap.coffee')
 
-module.exports = (tiles) ->
+loader = (tiles, style, cb) ->
   can = new Canvas(
     width: tiles.width * Configs.TILE_SIZE
     height: tiles.height * (Configs.TILE_SIZE - Configs.CROP)
   )
+  
+  can.el.style.display = "none"
+  
+  counter = tiles.cells.length  
   
   for tile in tiles.cells
     do (tile)->
@@ -20,7 +24,6 @@ module.exports = (tiles) ->
       
       img.addEventListener('load', ()->
         can.exec(->
-          console.log(tile.x)
           @ctx.drawImage(
             img
             0
@@ -34,10 +37,29 @@ module.exports = (tiles) ->
           )
         )
         img.parentNode.removeChild(img)
+        
+        counter--
+        cb(can) if not counter
       )
       
       document.body.appendChild(img)
-      img.src = URL(tile.geo.lat, tile.geo.lng,'TERRAIN')
+      img.src = URL(tile.geo.lat, tile.geo.lng, style)
 
   
   document.body.appendChild(can.el)
+  
+module.exports = (tiles) ->
+  loader(tiles, 'TERRAIN', (can)->
+    imageData = can.ctx.getImageData(0, 0, can.width, can.height)
+    data = imageData.data
+    
+    p = 0
+    while p < data.length
+      data[p + 3] = 255 - data[p + 1]
+      data[p + 1] = 0
+
+      p += 4
+    
+    can.ctx.putImageData(imageData, 0, 0)
+    can.el.style.display = "block"
+  )

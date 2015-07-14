@@ -11,7 +11,7 @@ STYLES =
       "featureType": "water",
       "elementType": "geometry",
       "stylers": [
-        { "color": "#80ff80" },
+        { "color": "#00FF00" },
         { "visibility": "simplified" }
       ]
     }
@@ -19,18 +19,42 @@ STYLES =
       "featureType": "landscape",
       "elementType": "geometry",
       "stylers": [
-        { "color": "#828080" },
+        { "color": "#FF00FF" },
         { "visibility": "simplified" }
       ]
     }
-#    {
-#      "featureType": "landscape.natural",
-#      "elementType": "geometry",
-#      "stylers": [
-#        { "visibility": "on" },
-#        { "color": "#6e806f" }
-#      ]
-#    }
+  ]
+
+  MANMADE: [
+    {
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    }
+    {
+      "featureType": "water",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#00FF00" },
+        { "visibility": "simplified" }
+      ]
+    }
+    {
+      "featureType": "landscape.natural",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#00FF00" },
+        { "visibility": "on" }
+      ]
+    }
+    {
+      "featureType": "landscape.man_made",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#FF00FF" },
+        { "visibility": "on" }
+      ]
+    }
   ]
 
 
@@ -61,6 +85,8 @@ styleToQS = (ob)->
         
         qs += "|"
   
+  qs = qs.substring(1) if qs.length
+  
   qs
 
 module.exports = (lat, lng, style="")->
@@ -72,6 +98,7 @@ module.exports = (lat, lng, style="")->
   
   str = """
   https://maps.googleapis.com/maps/api/staticmap?
+  key=AIzaSyA8WwJ-pQ4_jkOVZw5OmYWT4wv9qQC0n48&
   center=#{lat},#{lng}&
   zoom=#{Configs.ZOOM}&
   scale=#{Configs.PIXEL_RATIO}&
