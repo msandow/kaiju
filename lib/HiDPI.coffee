@@ -25,7 +25,7 @@ module.exports = (pixelRatio)->
 
     if pixelRatio == 1
       return
-
+    
     for own key, value of ratioArgs
       prototype[key] = ((_super) ->
         ->
@@ -94,10 +94,11 @@ module.exports = (pixelRatio)->
     #
     prototype.drawImage = ((_super) ->
       ->
+
         args = Array::slice.call(arguments)
         ctx = args[0]
         mappedArgs = []
-
+        
         if args.length is 3
           mappedArgs = [
             args[0]
@@ -125,12 +126,12 @@ module.exports = (pixelRatio)->
         else if args.length is 9
           mappedArgs = args
 
-        for item, idx in mappedArgs when idx > 0
+        for item, idx in mappedArgs when idx > 1
           mappedArgs[idx] = mappedArgs[idx] * pixelRatio
-          true
 
         _super.apply this, mappedArgs
         return
     )(prototype.drawImage)
-
+      
+      
   )(CanvasRenderingContext2D.prototype)

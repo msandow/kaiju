@@ -2,6 +2,20 @@ Configs = require('./Configs.coffee')
 Canvas = require('./Canvas.coffee')
 URL = require('./StaticMap.coffee')
 
+greenScreen = (can)->
+  imageData = can.ctx.getImageData(0, 0, can.width, can.height)
+  data = imageData.data
+
+  p = 0
+  while p < data.length
+    data[p + 3] = 255 - data[p + 1]
+    data[p + 1] = 0
+
+    p += 4
+
+  can.ctx.putImageData(imageData, 0, 0)
+
+
 loader = (tiles, style, cb) ->
   can = new Canvas(
     width: tiles.width * Configs.TILE_SIZE
@@ -50,16 +64,12 @@ loader = (tiles, style, cb) ->
   
 module.exports = (tiles) ->
   loader(tiles, 'TERRAIN', (can)->
-    imageData = can.ctx.getImageData(0, 0, can.width, can.height)
-    data = imageData.data
-    
-    p = 0
-    while p < data.length
-      data[p + 3] = 255 - data[p + 1]
-      data[p + 1] = 0
-
-      p += 4
-    
-    can.ctx.putImageData(imageData, 0, 0)
+    can.ctx.save()
+    greenScreen(can)
+    pat = can.ctx.createPattern(resourceMap.EARTH.el, "repeat")
+    can.ctx.globalCompositeOperation = "source-in"
+    can.ctx.fillStyle = pat
+    can.ctx.fillRect(0,0,can.width,can.height)
+    can.ctx.restore()
     can.el.style.display = "block"
   )

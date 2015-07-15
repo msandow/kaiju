@@ -56,6 +56,71 @@ STYLES =
       ]
     }
   ]
+  
+  PARKS: [
+    {
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    }
+    {
+      "featureType": "water",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#00FF00" },
+        { "visibility": "simplified" }
+      ]
+    }
+    {
+      "featureType": "landscape",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#00FF00" },
+        { "visibility": "on" }
+      ]
+    }
+    {
+      "featureType": "poi.park",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#FF00FF" },
+        { "visibility": "on" }
+      ]
+    }
+  ]
+  
+  ROADS: [
+    {
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    }
+    {
+      "featureType": "water",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#00FF00" },
+        { "visibility": "simplified" }
+      ]
+    }
+    {
+      "featureType": "landscape",
+      "elementType": "geometry",
+      "stylers": [
+        { "color": "#00FF00" },
+        { "visibility": "on" }
+      ]
+    }
+    {
+      "featureType": "road.highway",
+      "elementType": "geometry.fill",
+      "stylers": [
+        { "color": "#FF00FF" },
+        { "weight": 3.8 },
+        { "visibility": "on" }
+      ]
+    }
+  ]
 
 
 styleToQS = (ob)->
