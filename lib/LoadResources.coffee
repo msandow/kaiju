@@ -18,7 +18,17 @@ loadImage = (src, cb)->
 
     can.exec(->
       @ctx.fillRect(0,0,@width,@height)
-      @ctx.drawImage(img,0,0,@width,@width,0,0,@width*Configs.PIXEL_RATIO,@height*Configs.PIXEL_RATIO)
+      @ctx.drawImage(
+        img,
+        0,
+        0,
+        @width,
+        @width,
+        0,
+        0,
+        @width*Configs.PIXEL_RATIO,
+        @height*Configs.PIXEL_RATIO
+      )
     )
     
     can.el.style.display = 'none'
